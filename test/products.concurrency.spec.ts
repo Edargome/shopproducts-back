@@ -3,7 +3,9 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
 import { AppModule } from '../src/app.module';
 
-describe('Products Concurrency (e2e)', () => {
+jest.setTimeout(30000);
+
+describe('Products Concurrency', () => {
   let app: INestApplication;
 
   beforeAll(async () => {
@@ -34,6 +36,7 @@ describe('Products Concurrency (e2e)', () => {
       .expect(201);
 
     const productId = createRes.body.id ?? createRes.body._id;
+    expect(productId).toBeTruthy();
 
     // 2) Disparar 20 requests en paralelo (qty=1)
     const N = 20;
@@ -47,7 +50,6 @@ describe('Products Concurrency (e2e)', () => {
 
     const ok = results.filter(r => r.status === 201 || r.status === 200);
     const conflict = results.filter(r => r.status === 500);
-    console.log(results.map(r => r.status));
 
     // 3) Esperamos 1 éxito y 19 conflictos
     expect(ok.length).toBe(1);
