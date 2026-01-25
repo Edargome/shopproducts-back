@@ -49,7 +49,7 @@ describe('Products Concurrency', () => {
     );
 
     const ok = results.filter(r => r.status === 201 || r.status === 200);
-    const conflict = results.filter(r => r.status === 500);
+    const conflict = results.filter(r => r.status === 409);
 
     // 3) Esperamos 1 éxito y 19 conflictos
     expect(ok.length).toBe(1);
