@@ -14,6 +14,9 @@ import { DecrementStockUseCase } from '../../application/use-cases/decrement-sto
 import { DecrementStockDto } from './dto/decrement-stock.dto';
 import { AdjustStockUseCase } from '../../application/use-cases/adjust-stock.usecase';
 import { AdjustStockDto } from './dto/adjust-stock.dto';
+import { SearchProductsUseCase } from '../../application/use-cases/search-products.usecase';
+import { SearchProductsQueryDto } from './dto/search-products.dto';
+import { ListProductsQueryDto } from './dto/list-products.dto';
 
 @UseFilters(ProductsExceptionsFilter)
 @Controller('products')
@@ -26,6 +29,7 @@ export class ProductsController {
     private readonly deleteUC: DeleteProductUseCase,
     private readonly decStockUC: DecrementStockUseCase,
     private readonly adjustStockUC: AdjustStockUseCase,
+    private readonly searchUC: SearchProductsUseCase,
   ) {}
 
   @Post()
@@ -41,14 +45,19 @@ export class ProductsController {
     );
   }
 
+  @Get('search')
+  search(@Query() q: SearchProductsQueryDto) {
+    return this.searchUC.execute({ q: q.q, limit: q.limit, page: q.page });
+  }
+
   @Get(':id')
   get(@Param('id') id: string) {
     return this.getUC.execute(id);
   }
 
   @Get()
-  list(@Query() q: PaginationQueryDto) {
-    return this.listUC.execute({ limit: q.limit, cursor: q.cursor });
+  list(@Query() q: ListProductsQueryDto) {
+    return this.listUC.execute({ limit: q.limit, page: q.page });
   }
 
   @Patch(':id')
