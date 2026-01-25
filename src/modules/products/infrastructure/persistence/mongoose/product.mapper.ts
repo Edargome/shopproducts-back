@@ -13,5 +13,17 @@ export class ProductMapper {
       doc.updatedAt,
       doc.createdAt,
     );
+  };
+  static toDomainFromLean(d: any) {
+    return new Product(
+      d._id.toString(),
+      d.sku,
+      d.name,
+      d.description ?? null,
+      d.price,
+      d.stock,
+      d.updatedAt ?? new Date(),
+      d.createdAt ?? new Date(),
+    );
   }
 }

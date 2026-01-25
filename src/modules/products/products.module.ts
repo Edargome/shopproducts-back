@@ -11,6 +11,7 @@ import { UpdateProductUseCase } from './application/use-cases/update-product.use
 import { DeleteProductUseCase } from './application/use-cases/delete-product.usecase';
 import { DecrementStockUseCase } from './application/use-cases/decrement-stock.usecase';
 import { AdjustStockUseCase } from './application/use-cases/adjust-stock.usecase';
+import { SearchProductsUseCase } from './application/use-cases/search-products.usecase';
 
 @Module({
   imports: [
@@ -54,6 +55,11 @@ import { AdjustStockUseCase } from './application/use-cases/adjust-stock.usecase
     {
       provide: AdjustStockUseCase,
       useFactory: (repo) => new AdjustStockUseCase(repo),
+      inject: [PRODUCT_REPOSITORY],
+    },
+    {
+      provide: SearchProductsUseCase,
+      useFactory: (repo) => new SearchProductsUseCase(repo),
       inject: [PRODUCT_REPOSITORY],
     },
   ],

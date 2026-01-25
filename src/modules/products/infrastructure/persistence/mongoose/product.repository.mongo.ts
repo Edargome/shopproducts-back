@@ -32,25 +32,25 @@ export class ProductMongoRepository implements ProductRepositoryPort {
     return doc ? ProductMapper.toDomain(doc as any) : null;
   }
 
-  async list(query: ListProductsQuery): Promise<{ items: Product[]; nextCursor?: string }> {
-    const limit = Math.min(Math.max(query.limit, 1), 50);
+  async list(query: { limit: number; page: number }) {
+    const limit = Math.min(Math.max(Number(query.limit), 1), 50);
+    const page = Math.max(Number(query.page), 1);
+    const skip = (page - 1) * limit;
 
-    const filter: any = {};
-    if (query.cursor && Types.ObjectId.isValid(query.cursor)) {
-      filter._id = { $gt: new Types.ObjectId(query.cursor) };
-    }
+    const [total, docs] = await Promise.all([
+      this.model.countDocuments({}),
+      this.model
+        .find({})
+        .sort({ _id: -1 }) // más recientes primero
+        .skip(skip)
+        .limit(limit)
+        .select('_id sku name description price stock createdAt updatedAt')
+        .lean()
+        .exec(),
+    ]);
 
-    const docs = await this.model
-      .find(filter)
-      .sort({ _id: 1 })
-      .limit(limit + 1)
-      .lean(false)
-      .exec();
-
-    const items = docs.slice(0, limit).map((d: any) => ProductMapper.toDomain(d));
-    const next = docs.length > limit ? docs[limit]._id.toString() : undefined;
-
-    return { items, nextCursor: next };
+    const items = docs.map((d: any) => ProductMapper.toDomainFromLean(d));
+    return { items, total };
   }
 
   async update(product: Product): Promise<Product> {
@@ -122,4 +122,39 @@ export class ProductMongoRepository implements ProductRepositoryPort {
 
     return doc ? ProductMapper.toDomain(doc as any) : null;
   }
+
+  async search(query: { q: string; limit: number; page: number }) {
+    const limit = Math.min(Math.max(Number(query.limit), 1), 50);
+    const page = Math.max(Number(query.page), 1);
+    const skip = (page - 1) * limit;
+
+    const filter = { $text: { $search: query.q } };
+    const total = await this.model.countDocuments(filter);
+
+    // traer items con score y proyección ligera
+    const docs = await this.model
+      .find(filter, { score: { $meta: 'textScore' } })
+      .sort({ score: { $meta: 'textScore' } })
+      .skip(skip)
+      .limit(limit)
+      .select('_id sku name description price stock updatedAt')
+      .lean()
+      .exec();
+
+    const items = docs.map((d: any) =>
+      new (require('../../../domain/entities/product.entity').Product)(
+        d._id.toString(),
+        d.sku,
+        d.name,
+        d.description ?? null,
+        d.price,
+        d.stock,
+        d.updatedAt ?? new Date(),
+        d.createdAt ?? new Date(),
+      ),
+    );
+
+    return { items, total };
+  }
+
 }

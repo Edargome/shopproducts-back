@@ -5,7 +5,7 @@ export type ProductDocument = HydratedDocument<ProductMongo>;
 
 @Schema({ timestamps: true, collection: 'products' })
 export class ProductMongo {
-  @Prop({ required: true, unique: true, index: true })
+  @Prop({ required: true, unique: true })
   sku!: string;
 
   @Prop({ required: true })
@@ -25,4 +25,5 @@ export class ProductMongo {
 }
 
 export const ProductSchema = SchemaFactory.createForClass(ProductMongo);
+ProductSchema.index({ sku: 1 }, { unique: true });
 ProductSchema.index({ sku: 'text', name: 'text', description: 'text' });

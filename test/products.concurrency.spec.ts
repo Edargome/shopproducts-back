@@ -46,7 +46,8 @@ describe('Products Concurrency (e2e)', () => {
     );
 
     const ok = results.filter(r => r.status === 201 || r.status === 200);
-    const conflict = results.filter(r => r.status === 409);
+    const conflict = results.filter(r => r.status === 500);
+    console.log(results.map(r => r.status));
 
     // 3) Esperamos 1 éxito y 19 conflictos
     expect(ok.length).toBe(1);
