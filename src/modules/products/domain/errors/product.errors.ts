@@ -1,6 +1,6 @@
 export class ProductNotFoundError extends Error {
   constructor() {
-    super('Product not found');
+    super('Product not found in the system');
   }
 }
 
@@ -12,7 +12,7 @@ export class SkuAlreadyExistsError extends Error {
 
 export class InsufficientStockError extends Error {
   constructor() {
-    super('Insufficient stock');
+    super('Insufficient stock available');
   }
 }
 

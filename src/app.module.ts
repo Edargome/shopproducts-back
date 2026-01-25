@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { APP_FILTER } from '@nestjs/core';
-import { ProductsExceptionsFilter } from './modules/products/interfaces/http/filters/product-exceptions.filter';
+import { DomainErrorsFilter } from './common/filters/domain-errors.filter';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { ProductsModule } from './modules/products/products.module';
@@ -22,7 +22,7 @@ import { MongooseModule } from '@nestjs/mongoose/dist/mongoose.module';
   controllers: [AppController],
   providers: [
     AppService,
-    { provide: APP_FILTER, useClass: ProductsExceptionsFilter },
+    { provide: APP_FILTER, useClass: DomainErrorsFilter },
   ],
 })
 export class AppModule {}
