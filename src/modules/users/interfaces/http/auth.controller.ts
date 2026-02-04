@@ -6,7 +6,9 @@ import { LoginUseCase } from '../../application/use-cases/login.usecase';
 import { RegisterUserCommand } from '../../application/dto/register-user.command';
 import { LoginCommand } from '../../application/dto/login.command';
 import { JwtAuthGuard } from '../../../../common/auth/jwt-auth.guard';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -14,6 +16,7 @@ export class AuthController {
     private readonly loginUC: LoginUseCase,
   ) {}
 
+  @ApiOperation({ summary: 'Registrar usuario' })
   @Post('register')
   async register(@Body() dto: RegisterUserDto) {
     const user = await this.registerUC.execute(new RegisterUserCommand(dto.email, dto.password));
@@ -28,11 +31,14 @@ export class AuthController {
     };
   }
 
+  @ApiOperation({ summary: 'Login (retorna accessToken JWT)' })
   @Post('login')
   login(@Body() dto: LoginDto) {
     return this.loginUC.execute(new LoginCommand(dto.email, dto.password));
   }
 
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Retorna el usuario autenticado (actor)' })
   @UseGuards(JwtAuthGuard)
   @Get('me')
   me(@Req() req: any) {
