@@ -19,8 +19,10 @@ import { ListProductsQueryDto } from './dto/list-products.dto';
 import { JwtAuthGuard } from '../../../../common/auth/jwt-auth.guard';
 import { PurchaseProductUseCase } from '../../application/use-cases/purchase-product.usecase';
 import { PurchaseProductDto } from './dto/purchase-product.dto';
+import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 @UseFilters(ProductsExceptionsFilter)
+@ApiTags('Products')
 @Controller('products')
 export class ProductsController {
   constructor(
@@ -42,18 +44,22 @@ export class ProductsController {
   }
 
   // ✅ Público
+  @ApiOperation({ summary: 'Obtener producto por id' })
   @Get(':id')
   get(@Param('id') id: string) {
     return this.getUC.execute(id);
   }
 
   // ✅ Público
+  @ApiOperation({ summary: 'Listar productos (paginado)' })
   @Get()
   list(@Query() q: ListProductsQueryDto) {
     return this.listUC.execute({ limit: q.limit, page: q.page });
   }
 
   // 🔒 ADMIN
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: '[ADMIN] Crear producto' })
   @UseGuards(JwtAuthGuard)
   @Post()
   create(@Req() req: any, @Body() dto: CreateProductDto) {
@@ -64,6 +70,8 @@ export class ProductsController {
   }
 
   // 🔒 ADMIN
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: '[ADMIN] Editar producto' })
   @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(@Req() req: any, @Param('id') id: string, @Body() dto: UpdateProductDto) {
@@ -74,6 +82,8 @@ export class ProductsController {
   }
 
   // 🔒 ADMIN
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: '[ADMIN] Eliminar producto' })
   @UseGuards(JwtAuthGuard)
   @Delete(':id')
   remove(@Req() req: any, @Param('id') id: string) {
@@ -88,6 +98,8 @@ export class ProductsController {
   }
 
   // 🔒 ADMIN
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: '[ADMIN] Ajustar stock (delta o set)' })
   @UseGuards(JwtAuthGuard)
   @Post(':id/adjust-stock')
   adjustStock(@Req() req: any, @Param('id') id: string, @Body() dto: AdjustStockDto) {
@@ -99,6 +111,8 @@ export class ProductsController {
   }
 
   // 🛒 USER (auth requerido) - “simula compra” y descuenta stock
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: '[AUTH] Comprar producto (descuenta stock)' })
   @UseGuards(JwtAuthGuard)
   @Post(':id/purchase')
   purchase(@Req() req: any, @Param('id') id: string, @Body() dto: PurchaseProductDto) {

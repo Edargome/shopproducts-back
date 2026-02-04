@@ -37,8 +37,8 @@ async function seed() {
   // Opcional: si quieres reiniciar datos antes de seedear
   // await Product.deleteMany({});
 
-  const total = 50_000;
-  const batchSize = 1_000;
+  const total = 500;
+  const batchSize = 10;
 
   console.log(`Seeding ${total} products in batches of ${batchSize}...`);
 
@@ -47,7 +47,7 @@ async function seed() {
     const end = Math.min(i + batchSize - 1, total);
 
     for (let k = i; k <= end; k++) {
-      const sku = `SKU-${pad(k, 5)}`; // SKU-00001 ... SKU-50000
+      const sku = `SKU-${pad(k, 5)}`; 
 
       batch.push({
         sku,
