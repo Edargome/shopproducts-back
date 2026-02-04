@@ -61,7 +61,7 @@ npm test
 
 ### Última prueba ejecutada (proporcionada)
 ```
-> smartinventory-pro@0.0.1 test
+> shoppoducts@0.0.1 test
 > jest
 
  PASS  test/adjust-stock.usecase.spec.ts
@@ -248,7 +248,7 @@ Tests:       6 passed, 6 total
 Snapshots:   0 total
 Time:        9.181 s, estimated 16 s
 Ran all test suites.
-PS C:\Users\edwin\Desktop\smartinventory-pro>
+PS C:\Users\edwin\Desktop\shoppoducts>
 ```
 
 ## Notas / Advertencia conocida

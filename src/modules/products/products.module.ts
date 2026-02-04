@@ -12,6 +12,7 @@ import { DeleteProductUseCase } from './application/use-cases/delete-product.use
 import { DecrementStockUseCase } from './application/use-cases/decrement-stock.usecase';
 import { AdjustStockUseCase } from './application/use-cases/adjust-stock.usecase';
 import { SearchProductsUseCase } from './application/use-cases/search-products.usecase';
+import { PurchaseProductUseCase } from './application/use-cases/purchase-product.usecase';
 
 @Module({
   imports: [
@@ -60,6 +61,11 @@ import { SearchProductsUseCase } from './application/use-cases/search-products.u
     {
       provide: SearchProductsUseCase,
       useFactory: (repo) => new SearchProductsUseCase(repo),
+      inject: [PRODUCT_REPOSITORY],
+    },
+    {
+      provide: PurchaseProductUseCase,
+      useFactory: (repo) => new PurchaseProductUseCase(repo),
       inject: [PRODUCT_REPOSITORY],
     },
   ],
