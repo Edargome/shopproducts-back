@@ -1,11 +1,15 @@
 import { ProductRepositoryPort } from '../../domain/ports/product.repository.port';
 import { ProductNotFoundError } from '../../domain/errors/product.errors';
 import { UpdateProductCommand } from '../dto/update-product.command';
+import { Actor } from '../../../../common/auth/actor';
+import { requireAdmin } from '../../../../common/auth/authorization';
 
 export class UpdateProductUseCase {
   constructor(private readonly repo: ProductRepositoryPort) {}
 
-  async execute(cmd: UpdateProductCommand) {
+  async execute(actor: Actor, cmd: UpdateProductCommand) {
+    requireAdmin(actor);
+
     const product = await this.repo.findById(cmd.id);
     if (!product) throw new ProductNotFoundError();
 
