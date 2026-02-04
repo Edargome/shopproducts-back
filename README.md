@@ -1,4 +1,4 @@
-# SmartInventory Pro - Backend (NestJS + MongoDB Atlas)
+# ShopProduct - Backend (NestJS + MongoDB Atlas)
 
 API de backend para la prueba técnica de ShopProduct. Implementa la gestión de productos con arquitectura hexagonal (Dominio/Aplicación/Infraestructura/Presentación) y operaciones de inventario con seguridad de concurrencia.
 
